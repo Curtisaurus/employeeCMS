@@ -47,6 +47,9 @@ const startPrompt = () => {
             case "View all roles":
                 getRoles();
                 break;
+            case "Add a Role":
+                addRole();
+                break;
             default:
                 connection.end();
         }
@@ -150,5 +153,60 @@ const getRoles = () => {
         if (err) throw err;
         console.table(res);
         startPrompt();
-    })
+    });
+};
+
+const addRole = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'title',
+            message: 'Enter title of role:',
+            validate: (name) => {
+                if (name) {
+                    return true
+                } else {
+                    return 'Please enter a valid title'
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'Enter salary:',
+            validate: (salary) => {
+                console.log(typeof(salary))
+                if (typeof(parseFloat(salary)) == 'number') {
+                    return true
+                } else {
+                    return 'Please enter a valid currency amount'
+                }
+            }
+        },
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Select department of role:',
+            choices: () => {
+                let deptArr = [];
+                return new Promise((resolve, reject) => {
+                    connection.query(`SELECT name, id from department`, (err, res) => {
+                        if (err) throw err;
+                        res.forEach((dept) => {
+                            deptArr.push({name: dept.name, value: dept.id});
+                        });
+                        resolve(deptArr);
+                    });
+                });
+            }
+        },
+    ]).then((ans) => {
+        connection.query(`INSERT INTO role (title, salary, department_id)
+            VALUES ("${ans.title}", "${ans.salary}", ${ans.department});`,
+            (err, res) => {
+                if (err) throw err;
+                startPrompt();
+            }
+        );
+    });
 }
