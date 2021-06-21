@@ -1,6 +1,7 @@
 // requiring dependencies
 const mysql = require('mysql');
 const inquirer = require('inquirer');
+const cTable = require('console.table');
 // for using environment variables
 require('dotenv').config();
 
@@ -22,17 +23,42 @@ const startPrompt = () => {
     inquirer.prompt([
         {
             type: "list",
-            name: "intro",
+            name: "menu",
+            message: "Please select an option:",
             choices: [
-                "again",
-                "exit"
+                "View all employees",
+                "Add Employee",
+                "View all roles",
+                "Add a Role",
+                "View all departments",
+                "Add a Department",
+                "Exit",
+                new inquirer.Separator()
             ]
         }
     ]).then((answer) => {
-        if (answer.intro == 'exit') {
-            connection.end();
-        } else {
-            startPrompt();
+        switch (answer.menu) {
+            case "View all employees":
+                getEmployees();
+                break;
+            default:
+                connection.end();
         }
+    })
+}
+
+getEmployees = () => {
+    const query = 
+        `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
+        CONCAT(manager.first_name, " ", manager.last_name) AS manager
+        FROM employee
+        LEFT JOIN role on role.id = employee.role_id
+        LEFT JOIN department on department.id = role.department_id
+        LEFT JOIN employee AS manager on manager.id = employee.manager_id`;
+
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        startPrompt();
     })
 }
