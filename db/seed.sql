@@ -1,0 +1,27 @@
+USE employees_DB;
+
+INSERT INTO department (name)
+VALUES ("Sales"), ("Engineering"), ("Finance"), ("Legal");
+
+INSERT INTO roles (title, salary, department_id)
+VALUES
+    ("Sales Lead", 100000, 1),
+    ("Salesperson", 80000, 1),
+    ("Lead Engineer", 150000, 2),
+    ("Software Engineer", 120000, 2),
+    ("Accountant", 125000, 3),
+    ("Legal Team Lead", 250000, 4),
+    ("Lawyer", 190000, 4);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES
+    ("Aaron", "Apple", 1),
+    ("Benny", "Banana", 1, 1),
+    ("Terry", "Tester", 2, 3),
+    ("Carrie", "Cherry", 2),
+    ("Doug", "Durian", 2, 4),
+    ("Erin", "Elderberry", 2, 4),
+    ("Fiona", "Fruit", 3),
+    ("Gary", "Grape", 4),
+    ("Howie", "Honeydew", 4, 8),
+    ("Ellie", "Outoforder", 1, 1);
