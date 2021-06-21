@@ -44,6 +44,9 @@ const startPrompt = () => {
             case "Add Employee":
                 addEmployee();
                 break;
+            case "View all roles":
+                getRoles();
+                break;
             default:
                 connection.end();
         }
@@ -135,4 +138,17 @@ const addEmployee = () => {
             }
         );
     });
+}
+
+const getRoles = () => {
+    const query = 
+        `SELECT role.id, role.title AS role, department.name AS department, role.salary
+        FROM role
+        LEFT JOIN department on role.department_id = department.id;`;
+
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        startPrompt();
+    })
 }
