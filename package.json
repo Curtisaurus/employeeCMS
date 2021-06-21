@@ -1,7 +1,7 @@
 {
   "name": "employeecms",
   "version": "1.0.0",
-  "description": "",
+  "description": "A command-line application to input and record employee information using MySQL databases",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,5 +14,20 @@
     "dotenv": "^10.0.0",
     "inquirer": "^8.1.1",
     "mysql": "^2.18.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Curtisaurus/employeeCMS.git"
+  },
+  "keywords": [
+    "inquirer",
+    "MySQL",
+    "command-line",
+    "node"
+  ],
+  "bugs": {
+    "url": "https://github.com/Curtisaurus/employeeCMS/issues"
+  },
+  "homepage": "https://github.com/Curtisaurus/employeeCMS#readme"
 }
