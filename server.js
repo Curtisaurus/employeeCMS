@@ -50,6 +50,12 @@ const startPrompt = () => {
             case "Add a Role":
                 addRole();
                 break;
+            case "View all departments":
+                getDept();
+                break;
+            case "Add a Department":
+                addDept();
+                break;
             default:
                 connection.end();
         }
@@ -203,6 +209,42 @@ const addRole = () => {
     ]).then((ans) => {
         connection.query(`INSERT INTO role (title, salary, department_id)
             VALUES ("${ans.title}", "${ans.salary}", ${ans.department});`,
+            (err, res) => {
+                if (err) throw err;
+                startPrompt();
+            }
+        );
+    });
+}
+
+const getDept = () => {
+    const query = 
+        `SELECT id, name AS department FROM department;`;
+
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        startPrompt();
+    });
+};
+
+const addDept = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'Enter name of department:',
+            validate: (name) => {
+                if (name) {
+                    return true
+                } else {
+                    return 'Please enter a valid name'
+                }
+            }
+        }
+    ]).then((ans) => {
+        connection.query(`INSERT INTO department (name)
+            VALUES ("${ans.name}");`,
             (err, res) => {
                 if (err) throw err;
                 startPrompt();
