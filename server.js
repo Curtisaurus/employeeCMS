@@ -32,6 +32,7 @@ const startPrompt = () => {
                 "Add a Role",
                 "View all departments",
                 "Add a Department",
+                "Update employee's manager",
                 "Exit",
                 new inquirer.Separator()
             ]
@@ -55,6 +56,9 @@ const startPrompt = () => {
                 break;
             case "Add a Department":
                 addDept();
+                break;
+            case "Update employee's manager":
+                updateManager();
                 break;
             default:
                 connection.end();
@@ -245,6 +249,52 @@ const addDept = () => {
     ]).then((ans) => {
         connection.query(`INSERT INTO department (name)
             VALUES ("${ans.name}");`,
+            (err, res) => {
+                if (err) throw err;
+                startPrompt();
+            }
+        );
+    });
+}
+
+const updateManager = () => {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employee',
+            message: 'Select employee to update:',
+            choices: () => {
+                let employeeArr = [];
+                return new Promise((resolve, reject) => {
+                    connection.query(`SELECT CONCAT(first_name, " ", last_name) as name, id FROM employee`, (err, res) => {
+                        if (err) throw err;
+                        res.forEach((emp) => {
+                            employeeArr.push({name: emp.name, value: emp.id});
+                        });
+                        resolve(employeeArr);
+                    });
+                });
+            }
+        },
+        {
+            type: 'list',
+            name: 'manager',
+            message: 'Select employee manager:',
+            choices: (ans) => {
+                let managerArr = [{name: "None", value: null}];
+                return new Promise((resolve, reject) => {
+                    connection.query(`SELECT CONCAT(first_name, " ", last_name) as name, id FROM employee WHERE id NOT IN(${ans.employee})`, (err, res) => {
+                        if (err) throw err;
+                        res.forEach((manager) => {
+                            managerArr.push({name: manager.name, value: manager.id});
+                        });
+                        resolve(managerArr);
+                    });
+                });
+            }
+        }
+    ]).then((ans) => {
+        connection.query(`UPDATE employee SET manager_id = ${ans.manager} WHERE id = ${ans.employee};`,
             (err, res) => {
                 if (err) throw err;
                 startPrompt();
