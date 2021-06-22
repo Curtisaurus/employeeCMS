@@ -297,6 +297,7 @@ const updateManager = () => {
         connection.query(`UPDATE employee SET manager_id = ${ans.manager} WHERE id = ${ans.employee};`,
             (err, res) => {
                 if (err) throw err;
+                console.log("Employee records updated.")
                 startPrompt();
             }
         );
