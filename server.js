@@ -453,3 +453,45 @@ const removeDept = () => {
         );
     });
 }
+
+const totalSalaries = () => {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Select department to view salary budget utilization:',
+            choices: () => {
+                let deptArr = [];
+                return new Promise((resolve, reject) => {
+                    connection.query(`SELECT name, id from department`, (err, res) => {
+                        if (err) throw err;
+                        res.forEach((dept) => {
+                            deptArr.push({name: dept.name, value: dept.id});
+                        });
+                        resolve(deptArr);
+                    });
+                });
+            }
+        }
+    ]).then((ans) => {
+        const query = 
+            `SELECT SUM(role.salary) as total, department.name as name
+            FROM employee
+            LEFT JOIN role on role.id = employee.role_id
+            LEFT JOIN department on department.id = role.department_id
+            WHERE department.id = ${ans.department}`;
+        connection.query(query,
+            (err, res) => {
+                if (err) throw err;
+                let salaryTotal = res[0].total
+                let department = res[0].name
+                if (salaryTotal && department) {
+                    console.log(`Salaries total $${salaryTotal} for ${department} department.`)
+                } else {
+                    console.log('No salary budget established for this department.')
+                }
+                startPrompt();
+            }
+        );
+    });
+}
